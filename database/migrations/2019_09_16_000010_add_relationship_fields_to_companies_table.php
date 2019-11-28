@@ -14,4 +14,16 @@ class AddRelationshipFieldsToCompaniesTable extends Migration
             $table->foreign('city_id', 'city_fk_344254')->references('id')->on('cities');
         });
     }
+
+     /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
+    public function down()
+    {
+        Schema::disableForeignKeyConstraints();
+        Schema::dropIfExists('companies');
+        Schema::enableForeignKeyConstraints();
+    }
 }

@@ -17,6 +17,15 @@ class UsersTableSeeder extends Seeder
                 'created_at'     => '2019-09-16 07:53:12',
                 'updated_at'     => '2019-09-16 07:53:12',
             ],
+            [
+                'id'             => 2,
+                'name'           => 'NonAdmin',
+                'email'          => 'nonadmin@admin.com',
+                'password'       => '$2y$10$tySIrWuYcOjZmQQ6WOERu.wk1JOmOIiQ5TboOs0eijrTA/nJ1DDzG',
+                'remember_token' => null,
+                'created_at'     => '2019-09-16 07:53:12',
+                'updated_at'     => '2019-09-16 07:53:12',
+            ],
         ];
 
         User::insert($users);

@@ -18,4 +18,16 @@ class CreateCategoryCompanyPivotTable extends Migration
             $table->foreign('category_id', 'category_id_fk_344255')->references('id')->on('categories')->onDelete('cascade');
         });
     }
+
+        /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
+    public function down()
+    {
+        Schema::dropIfExists('category_company');
+    }
+
+    
 }

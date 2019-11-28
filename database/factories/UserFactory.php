@@ -25,3 +25,13 @@ $factory->define(User::class, function (Faker $faker) {
         'remember_token' => Str::random(10),
     ];
 });
+
+$factory->state(User::class, 'admin_user', [])
+    ->afterCreatingState(User::class, 'admin_user', function ($user, $faker) {
+        $user->roles()->attach(1);
+});
+
+$factory->state(User::class, 'non_admin_user', [])
+    ->afterCreatingState(User::class, 'non_admin_user', function ($user, $faker) {
+        $user->roles()->attach(2);
+});
