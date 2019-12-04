@@ -2,25 +2,18 @@
 
 namespace Tests\Browser;
 
-use Tests\DuskTestCase;
+use Tests\QAPDuskTestCase;
 use Laravel\Dusk\Browser;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 
-class AuthenticationTest extends DuskTestCase
+class AuthenticationTest extends QAPDuskTestCase
 {
-    protected static $migrationRun = false;
     protected $user;
     protected $adminUser;
     protected $nonAdminUser;
 
     public function setUp(): void{
         parent::setUp();
-
-        if(!static::$migrationRun){
-            $this->artisan('migrate:refresh');
-            $this->artisan('db:seed');
-            static::$migrationRun = true;
-        }
 
         $this->user = factory('App\User')->create();
         $this->adminUser = factory('App\User')->state('admin_user')->create();
