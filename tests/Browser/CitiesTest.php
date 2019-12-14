@@ -2,8 +2,12 @@
 
 namespace Tests\Browser;
 
-use Tests\QAPDuskTestCase;
 use Laravel\Dusk\Browser;
+use Tests\QAPDuskTestCase;
+use Tests\Browser\Pages\citiesEdit;
+use Tests\Browser\Pages\citiesShow;
+use Tests\Browser\Pages\citiesIndex;
+use Tests\Browser\Pages\citiesCreate;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 
@@ -18,81 +22,82 @@ class CitiesTest extends QAPDuskTestCase
 
         $this->browse(function(Browser $browser) use($cities){
             $browser->loginAs('admin@admin.com')
-                    ->visit('/admin/cities')
-                    ->assertSee($cities->random()->name);
+                    ->visit(new citiesIndex)
+                    ->assertSeeCities($cities);
         });
     }
 
     /** @test */
     public function it_asserts_that_user_can_read_a_single_cities(){
-        $city = factory('App\City')->create();
+        $city = factory('App\City', 5)->create();
+        $randomCity = $city->random();
 
-        $this->browse(function(Browser $browser) use($city){
+        $this->browse(function(Browser $browser) use($randomCity){
             $browser->loginAs('admin@admin.com')
-                    ->visit('/admin/cities/'.$city->id)
-                    ->assertSee($city->id)
-                    ->assertSee($city->name);
+                    ->visit(new citiesIndex)
+                    ->pressViewButton($randomCity->id)
+                    ->visit(new citiesShow($randomCity->id))
+                    ->assertSeeCityDetails($randomCity);
         });
     }
 
     /** @test */
     public function it_asserts_that_user_can_add_a_new_city(){
 
-        $city = $this->faker->city;
+        $cityName = $this->faker->city;
 
-        $this->browse(function(Browser $browser) use ($city){
+        $this->browse(function(Browser $browser) use ($cityName){
             $browser->loginAs('admin@admin.com')
-                    ->visit('/admin/cities/create')
-                    ->assertSee('Create City')
-                    ->type('name', $city)
-                    ->press('Save')
-                    ->assertPathIs('/admin/cities')
-                    ->assertSeeIn('#DataTables_Table_0 > tbody > tr:nth-child(1) > td:nth-child(3)',$city);
+                    ->visit(new citiesIndex)
+                    ->pressAddCityButton()
+                    ->on(new citiesCreate)
+                    ->fillAndSubmitForm($cityName)
+                    ->on(new citiesIndex)
+                    ->assertSeeCity($cityName);
             
         });
 
-        $this->assertDatabaseHas('cities', ['name' => $city]);
+        $this->assertDatabaseHas('cities', ['name' => $cityName]);
     }
 
 
      /** @test */
      public function it_asserts_that_user_can_edit_a_city(){
 
-        $city = factory('App\City')->create();
+        $city = factory('App\City', 5)->create();
+        $randomCity = $city->random();
 
-        $this->browse(function(Browser $browser) use ($city){
+        $this->browse(function(Browser $browser) use ($randomCity){
             $browser->loginAs('admin@admin.com')
-                    ->visit('/admin/cities/'.$city->id.'/edit')
-                    ->assertSee('Edit City')
-                    ->append('name', ' Edited')
-                    ->press('Save')
-                    ->assertPathIs('/admin/cities')
-                    ->assertSeeIn('#DataTables_Table_0 > tbody > tr:nth-child(1) > td:nth-child(3)',$city->name.' Edited');
+                    ->visit(new citiesIndex)
+                    ->pressEditButton($randomCity->id)
+                    ->on(new citiesEdit($randomCity->id))
+                    ->fillAndSubmitForm()
+                    ->on(new citiesIndex)
+                    ->assertSeeCity($randomCity->name.' Edited');
             
         });
 
-        $this->assertDatabaseHas('cities', ['name' => $city->name.' Edited']);
+        $this->assertDatabaseHas('cities', ['name' => $randomCity->name.' Edited']);
     }
 
 
     /** @test */
     public function it_asserts_that_user_can_delete_a_city(){
 
-        $city = factory('App\City')->create();
+        $city = factory('App\City', 5)->create();
+        $randomCity = $city->random();
 
-        $this->browse(function(Browser $browser) use ($city){
+        $this->browse(function(Browser $browser) use ($randomCity){
             $browser->loginAs('admin@admin.com')
-                    ->visit('/admin/cities')
-                    ->click('#DataTables_Table_0 > tbody > tr:nth-child(1) > td:nth-child(4) > form > input.btn.btn-xs.btn-danger')
-                    ->assertDialogOpened('Are you sure?')
-                    ->acceptDialog()
-                    ->assertPathIs('/admin/cities')
-                    ->pause(4000)
-                    ->assertDontSee($city->name);
+                    ->visit(new citiesIndex)
+                    ->pressDeleteButton($randomCity->id)
+                    ->deleteCity()
+                    ->assertDontSeeCity($randomCity->name);
             
         });
 
-        $this->assertSoftDeleted('cities', ['name' => $city->name]);
+        $this->assertSoftDeleted('cities', ['name' => $randomCity->name]);
     }
 
 
