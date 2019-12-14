@@ -54,15 +54,15 @@ class citiesIndex extends Page
     }
 
     public function pressViewButton(Browser $browser, $cityId){
-        $browser->click('#DataTables_Table_0 > tbody > tr[data-entry-id="'.$cityId.'"] > td:nth-child(4) > a.btn.btn-xs.btn-primary');
+        $browser->click('@viewButton'.$cityId);
     }
 
     public function pressEditButton(Browser $browser, $cityId){
-        $browser->click('#DataTables_Table_0 > tbody > tr[data-entry-id="'.$cityId.'"] > td:nth-child(4) > a.btn.btn-xs.btn-info');
+        $browser->click('@editButton'.$cityId);
     }
 
     public function pressDeleteButton(Browser $browser, $cityId){
-        $browser->click('#DataTables_Table_0 > tbody > tr[data-entry-id="'.$cityId.'"] > td:nth-child(4) > form > input.btn.btn-xs.btn-danger');
+        $browser->click('@deleteButton'.$cityId);
     }
 
     public function pressAddCityButton(Browser $browser){
