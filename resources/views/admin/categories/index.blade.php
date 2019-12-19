@@ -39,7 +39,7 @@
                 <tbody>
                     @foreach($categories as $key => $category)
                         <tr data-entry-id="{{ $category->id }}">
-                            <td>
+                            <td dusk="selectCheckbox{{$category->id}}">
 
                             </td>
                             <td>
@@ -53,13 +53,13 @@
                             </td>
                             <td>
                                 @can('category_show')
-                                    <a class="btn btn-xs btn-primary" href="{{ route('admin.categories.show', $category->id) }}">
+                                    <a dusk="viewButton{{$category->id}}" class="btn btn-xs btn-primary" href="{{ route('admin.categories.show', $category->id) }}">
                                         {{ trans('global.view') }}
                                     </a>
                                 @endcan
 
                                 @can('category_edit')
-                                    <a class="btn btn-xs btn-info" href="{{ route('admin.categories.edit', $category->id) }}">
+                                    <a dusk="editButton{{$category->id}}" class="btn btn-xs btn-info" href="{{ route('admin.categories.edit', $category->id) }}">
                                         {{ trans('global.edit') }}
                                     </a>
                                 @endcan
@@ -68,7 +68,7 @@
                                     <form action="{{ route('admin.categories.destroy', $category->id) }}" method="POST" onsubmit="return confirm('{{ trans('global.areYouSure') }}');" style="display: inline-block;">
                                         <input type="hidden" name="_method" value="DELETE">
                                         <input type="hidden" name="_token" value="{{ csrf_token() }}">
-                                        <input type="submit" class="btn btn-xs btn-danger" value="{{ trans('global.delete') }}">
+                                        <input dusk="deleteButton{{$category->id}}" type="submit" class="btn btn-xs btn-danger" value="{{ trans('global.delete') }}">
                                     </form>
                                 @endcan
 
