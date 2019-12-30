@@ -33,7 +33,7 @@ class CompaniesController extends Controller
 
         $cities = City::all()->pluck('name', 'id')->prepend(trans('global.pleaseSelect'), '');
 
-        $categories = Category::all()->pluck('name', 'id');
+        $categories = Category::all()->pluck('name', 'id')->prepend(trans('global.pleaseSelect'), '');
 
         return view('admin.companies.create', compact('cities', 'categories'));
     }
@@ -43,9 +43,14 @@ class CompaniesController extends Controller
         $company = Company::create($request->all());
         $company->categories()->sync($request->input('categories', []));
 
-        if ($request->input('logo', false)) {
-            $company->addMedia(storage_path('tmp/uploads/' . $request->input('logo')))->toMediaCollection('logo');
+
+        if($request->hasFile('logo') && $request->file('logo')->isValid()){
+            $company->addMediaFromRequest('logo')->toMediaCollection('logo');
         }
+
+        // if ($request->input('logo', false)) {
+        //     $company->addMedia(storage_path('tmp/uploads/' . $request->input('logo')))->toMediaCollection('logo');
+        // }
 
         return redirect()->route('admin.companies.index');
     }
